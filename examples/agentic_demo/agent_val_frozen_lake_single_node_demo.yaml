@@ -69,8 +69,8 @@ whiten_advantages: true
 entropy_loss_coef: 0
 max_grad_norm: 1.0
 
-pretrain: Qwen/Qwen2.5-0.5B-Instruct
-reward_pretrain: Qwen/Qwen2.5-0.5B-Instruct
+pretrain: Qwen/Qwen2.5-3B-Instruct
+reward_pretrain: Qwen/Qwen2.5-3B-Instruct
 
 actor_train:
   model_args:
@@ -120,7 +120,7 @@ actor_infer:
       gpu_memory_utilization: 0.8
       block_size: 16
       load_format: auto
-  device_mapping: list(range(0,1))
+  device_mapping: list(range(0,8))
   infer_batch_size: 1
 
 reference:
@@ -134,8 +134,8 @@ reference:
   strategy_args:
     strategy_name: hf_infer
     strategy_config: ~
-  device_mapping: list(range(0,1))
-  infer_batch_size: 1
+  device_mapping: list(range(0,8))
+  infer_batch_size: 2
 
 reward_normalization:
   grouping: tags # 可以tags(env_type)/traj_group_id(group)/batch(rollout_batch)... group_by计算reward/adv
