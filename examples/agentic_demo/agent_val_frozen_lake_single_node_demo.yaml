@@ -47,7 +47,7 @@ checkpoint_config:
   type: file_system
   output_dir: ./output/render
 
-num_gpus_per_node: 1
+num_gpus_per_node: 8  # You have 8 H100 GPUs in one node
 
 max_steps: 100
 save_steps: 10000
