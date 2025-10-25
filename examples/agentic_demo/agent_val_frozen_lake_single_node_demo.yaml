@@ -39,9 +39,9 @@ tracker_kwargs:
 #    - roll
 #    - baseline
 
-track_with: tensorboard
-tracker_kwargs:
-  log_dir: /data/tensorboard/roll_exp/agentic_frozen_lake
+# track_with: tensorboard
+# tracker_kwargs:
+#   log_dir: /data/tensorboard/roll_exp/agentic_frozen_lake
 
 checkpoint_config:
   type: file_system
