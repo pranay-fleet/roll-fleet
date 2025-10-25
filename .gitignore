@@ -169,3 +169,5 @@ log
 
 output/
 .vscode/
+
+startup.sh
