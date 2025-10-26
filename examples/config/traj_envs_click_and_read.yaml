@@ -1,0 +1,38 @@
+# Configuration for Click and Read VL Task
+# A simple multi-turn environment for testing VL models with tool use
+
+max_tokens_per_step: 64
+max_actions_per_traj: 5
+
+custom_env:
+  ClickAndRead:
+    env_type: click_and_read
+    max_steps: ${max_actions_per_traj}
+    max_tokens_per_step: ${max_tokens_per_step}
+    env_manager_cls: roll.pipeline.agentic.env_manager.vl_traj_env_manager.VLTrajEnvManager
+    use_thread_lock: true
+    agent_system_template: ${agent_system_template}
+    pre_step_template: ${pre_step_template}
+    next_step_template: ${next_step_template}
+    env_config:
+      image_size: 100
+      button_size: 25
+      format_penalty: -0.01
+      render_mode: "rgb_array"
+
+agent_system_template: "You are a helpful AI assistant that can see images and perform actions. Complete the given tasks carefully."
+
+pre_step_template: "\nTurn {turn_idx}:\nCurrent Image:\n"
+
+next_step_template: |
+  You have {actions_left} actions left.
+  Max response length: {max_response_length} tokens.
+  
+  Available actions:
+  - <answer>click:[x,y]</answer> - Click at pixel coordinates (x, y) where 0 ≤ x,y < 100
+  - <answer>submit:[word]</answer> - Submit your final answer
+  
+  Decide the next action:
+
+action_pattern: <answer>(.*?)</answer>
+

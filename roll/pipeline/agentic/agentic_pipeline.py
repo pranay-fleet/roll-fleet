@@ -65,13 +65,13 @@ class AgenticPipeline(BasePipeline):
             resource_manager=self.resource_manager,
             worker_config=self.pipeline_config.reference,
         )
-        if self.pipeline_config.adv_estimator == "gae":
-            self.critic: Any = Cluster(
-                name=self.pipeline_config.critic.name,
-                worker_cls=self.pipeline_config.critic.worker_cls,
-                resource_manager=self.resource_manager,
-                worker_config=self.pipeline_config.critic,
-            )
+        # if self.pipeline_config.adv_estimator == "gae":
+        #     self.critic: Any = Cluster(
+        #         name=self.pipeline_config.critic.name,
+        #         worker_cls=self.pipeline_config.critic.worker_cls,
+        #         resource_manager=self.resource_manager,
+        #         worker_config=self.pipeline_config.critic,
+        #     )
 
         self.train_rollout_scheduler = RolloutScheduler.options(
             scheduling_strategy=NodeAffinitySchedulingStrategy(
@@ -95,8 +95,8 @@ class AgenticPipeline(BasePipeline):
         )
         refs: List[ray.ObjectRef] = []
         refs.extend(self.actor_train.initialize(pipeline_config=self.pipeline_config, blocking=False))
-        if self.pipeline_config.adv_estimator == "gae":
-            refs.extend(self.critic.initialize(pipeline_config=self.pipeline_config, blocking=False))
+        # if self.pipeline_config.adv_estimator == "gae":
+        #     refs.extend(self.critic.initialize(pipeline_config=self.pipeline_config, blocking=False))
         ray.get(refs)
 
         self.actor_infer.initialize(pipeline_config=self.pipeline_config, blocking=True)
@@ -108,10 +108,10 @@ class AgenticPipeline(BasePipeline):
             frequency=self.pipeline_config.actor_train.model_update_frequency,
         )
 
-        if self.pipeline_config.adv_estimator == "gae":
-            self.set_checkpoint_clusters(self.actor_train, self.critic)
-        else:
-            self.set_checkpoint_clusters(self.actor_train)
+        # if self.pipeline_config.adv_estimator == "gae":
+        #     self.set_checkpoint_clusters(self.actor_train, self.critic)
+        # else:
+        self.set_checkpoint_clusters(self.actor_train)
 
         self.running = RunningMoments()
 
