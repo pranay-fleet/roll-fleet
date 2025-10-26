@@ -165,7 +165,6 @@ class ClickAndReadEnv(Env):
             "button_clicked": self.button_clicked,
             "success": reward > 0,
             "steps_used": self.current_step,
-            "button_position": self.button_location_name,
         }
         
         info = {
@@ -175,8 +174,8 @@ class ClickAndReadEnv(Env):
                 "button_clicked": "last",
                 "success": "last",
                 "steps_used": "mean",
-                "button_position": "last",
-            }
+            },
+            "button_position": self.button_location_name,  # Non-metric metadata
         }
         
         return self.current_image, reward, terminated, truncated, info
