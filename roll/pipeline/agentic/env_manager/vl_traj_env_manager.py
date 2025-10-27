@@ -145,6 +145,14 @@ class VLTrajEnvManager(TrajEnvManager):
         ]
         images = []
 
+        # Debug: Print system message once at step 0
+        if self.rollout_cache.step == 0:
+            print("\n" + "="*80)
+            print("🔷 SYSTEM MESSAGE (Step 0 - Shown Once)")
+            print("="*80)
+            print(self.agent_system_template)
+            print("="*80 + "\n")
+
         for idx, content in enumerate(history.history):
 
             assert "observation" in content, ("The current EnvManager is specifically tailored for standard RL interaction "
@@ -173,8 +181,24 @@ class VLTrajEnvManager(TrajEnvManager):
             messages.append({"role": "user", "content": user_content_list_dict})
             images.append(PIL.Image.fromarray(content["observation"], mode='RGB'))
 
+            # Debug: Print user message
+            print("\n" + "="*80)
+            print(f"👤 USER MESSAGE (Step {idx} - Turn {idx + 1})")
+            print("="*80)
+            print(f"Pre-step text:\n{pre_step_content}")
+            print(f"\n[IMAGE: Screenshot {content['observation'].shape}]")
+            print(f"\nNext-step text:\n{next_step_content}")
+            print("="*80 + "\n")
+
             if "llm_response" in content:
                 messages.append({"role": "assistant", "content": content["llm_response"]})
+                
+                # Debug: Print assistant response
+                print("="*80)
+                print(f"🤖 ASSISTANT RESPONSE (Step {idx})")
+                print("="*80)
+                print(content["llm_response"])
+                print("="*80 + "\n")
 
         lm_input_texts = self.tokenizer.apply_chat_template(messages, add_generation_prompt=True, tokenize=False)
         features = [{

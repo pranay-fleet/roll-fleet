@@ -1,0 +1,105 @@
+[
+    {
+        "type": "function", 
+        "function": {
+            "name": "browser",
+            "description": "Interact with the browser using Playwright",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "action": {
+                        "type": "string",
+                        "enum": [
+                            "key", "type", "mouse_move", "left_click", "left_click_drag",
+                            "right_click", "middle_click", "double_click", "screenshot",
+                            "cursor_position", "left_mouse_down", "left_mouse_up", "scroll",
+                            "hold_key", "wait", "triple_click"
+                        ],
+                        "description": "The action to perform"
+                    },
+                    "text": {
+                        "type": "string",
+                        "description": "Text to type or key to press"
+                    },
+                    "x": {
+                        "type": "integer",
+                        "description": "X coordinate for mouse actions"
+                    },
+                    "y": {
+                        "type": "integer", 
+                        "description": "Y coordinate for mouse actions"
+                    },
+                    "start_x": {
+                        "type": "integer",
+                        "description": "Start X coordinate for drag actions"
+                    },
+                    "start_y": {
+                        "type": "integer",
+                        "description": "Start Y coordinate for drag actions"
+                    },
+                    "scroll_direction": {
+                        "type": "string",
+                        "enum": ["up", "down", "left", "right"],
+                        "description": "Direction to scroll"
+                    },
+                    "scroll_amount": {
+                        "type": "integer",
+                        "description": "Number of scroll steps"
+                    },
+                    "duration": {
+                        "type": "number",
+                        "description": "Duration in seconds for hold_key or wait actions"
+                    }
+                },
+                "required": ["action"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "complete_task",
+            "description": "Signal that the task has been completed successfully. Use this when you have finished the assigned task. If the task requires you to submit an answer, you can do so here.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "description": "Whether the task was completed successfully"
+                    },
+                    "summary": {
+                        "type": "string",
+                        "description": "A brief summary of what was accomplished"
+                    },
+                    "answer": {
+                        "type": "string",
+                        "description": "Optional: The specific answer to the question/task if applicable (e.g., for Q&A tasks, data extraction, counting tasks, etc.)"
+                    }
+                },
+                "required": ["success", "summary"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "give_up",
+            "description": "LAST RESORT ONLY: Give up on the task when you have absolutely no other alternatives. This should ONLY be used when: 1) You have exhausted all possible approaches, 2) The task appears impossible due to technical limitations, 3) You are stuck in an unrecoverable state. DO NOT use this tool if you could try different approaches, wait longer, or attempt alternative solutions. This is a failure state - use it sparingly.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "reason": {
+                        "type": "string",
+                        "description": "Detailed explanation of why you are giving up and what you have already tried"
+                    },
+                    "attempts_made": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "List of specific approaches and solutions you have already attempted"
+                    }
+                },
+                "required": ["reason", "attempts_made"]
+            }
+        }
+    }
+]

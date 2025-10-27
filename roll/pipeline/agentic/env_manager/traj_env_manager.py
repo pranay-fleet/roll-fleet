@@ -160,6 +160,7 @@ class TrajEnvManager(BaseEnvManager):
         with self.thread_lock, self.env_step_limiter:
             # `observation` describes the current game-state prompt;
             # `info["suffix"]` carries the current environment-specific state string.
+            #TODO(pranay): env reset is called here
             observation, info = self.env.reset(seed=seed)
         self.rollout_cache.history.append({
             "observation": observation,
@@ -205,6 +206,7 @@ class TrajEnvManager(BaseEnvManager):
         return self.rollout_cache
 
     def make_decision(self, rollout_cache: RolloutCache):
+        # This is called in a loop?
         lm_input = self.format_messages(rollout_cache)
         input_ids = lm_input.batch["input_ids"]
 

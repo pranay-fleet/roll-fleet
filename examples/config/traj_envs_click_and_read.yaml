@@ -1,8 +1,8 @@
 # Configuration for Click and Read VL Task
-# A simple multi-turn environment for testing VL models with tool use
+# Browser-based environment for training VL models with tool use (Fleet tasks)
 
-max_tokens_per_step: 64
-max_actions_per_traj: 5
+max_tokens_per_step: 256
+max_actions_per_traj: 30
 
 custom_env:
   ClickAndRead:
@@ -17,22 +17,63 @@ custom_env:
     env_config:
       image_size: 100
       button_size: 25
-      format_penalty: -0.01
+      format_penalty: -0.1
       render_mode: "rgb_array"
 
-agent_system_template: "You are a helpful AI assistant that can see images and perform actions. Complete the given tasks carefully."
+# System prompt that sets the agent's role and capabilities
+agent_system_template: |
+  You are an AI assistant that can interact with web browsers to solve tasks.
+  
+  You have access to the following tools:
+  
+  1. browser - Interact with the web page:
+     - browser(action="left_click", x=X, y=Y) - Click at coordinates
+     - browser(action="right_click", x=X, y=Y) - Right-click on elements
+     - browser(action="double_click", x=X, y=Y) - Double-click on elements
+     - browser(action="type", text="your text") - Type text into focused elements
+     - browser(action="key", text="Enter") - Press keys (Enter, Escape, Tab, etc.)
+     - browser(action="scroll", x=X, y=Y, scroll_direction="down", scroll_amount=3) - Scroll pages
+     - browser(action="wait", duration=2) - Wait for page updates
+     - browser(action="left_click_drag", start_x=X1, start_y=Y1, x=X2, y=Y2) - Drag elements
+  
+  2. complete_task - Signal when you have successfully completed the task:
+     - complete_task(success=true/false, summary="description of what was accomplished")
+     - complete_task(success=true, summary="Created Jira ticket", answer="OEP-130") - Include answer if task asks for specific data
+  
+  3. give_up - LAST RESORT: Give up on the task when you have absolutely no other alternatives:
+     - give_up(reason="detailed explanation", attempts_made=["list", "of", "specific attempts"])
+     - Only use when: 1) All approaches exhausted, 2) Task appears impossible, 3) Stuck in unrecoverable state
+  
+  Important guidelines:
+  - Analyze the screenshot carefully before taking actions
+  - Be methodical and break down tasks into steps
+  - Use coordinates within screen bounds
+  - Call complete_task when the task is done
 
-pre_step_template: "\nTurn {turn_idx}:\nCurrent Image:\n"
+# Pre-step template: shown before each screenshot
+# On step 0, env_instruction (with task.prompt) is automatically prepended here
+pre_step_template: "\n--- Turn {turn_idx} ---\nScreenshot:\n"
 
+# Next-step template: shown after each screenshot
+# Includes tool reminders so we don't rely solely on system prompt
 next_step_template: |
-  You have {actions_left} actions left.
-  Max response length: {max_response_length} tokens.
   
-  Available actions:
-  - <answer>click:[x,y]</answer> - Click at pixel coordinates (x, y) where 0 ≤ x,y < 100
-  - <answer>submit:[word]</answer> - Submit your final answer
+  Available tools:
+  • browser(action="left_click", x=X, y=Y)
+  • browser(action="right_click", x=X, y=Y)
+  • browser(action="double_click", x=X, y=Y)
+  • browser(action="type", text="...")
+  • browser(action="key", text="Enter")
+  • browser(action="scroll", x=X, y=Y, scroll_direction="down", scroll_amount=3)
+  • browser(action="wait", duration=2)
+  • browser(action="left_click_drag", start_x=X1, start_y=Y1, x=X2, y=Y2)
+  • complete_task(success=true/false, summary="...", answer="...")
+  • give_up(reason="...", attempts_made=[...])
   
-  Decide the next action:
+  Actions remaining: {actions_left}
+  Max response: {max_response_length} tokens
+  
+  Your action:
 
-action_pattern: <answer>(.*?)</answer>
+action_pattern: (browser|complete_task|give_up)\s*\([^)]*\)
 
