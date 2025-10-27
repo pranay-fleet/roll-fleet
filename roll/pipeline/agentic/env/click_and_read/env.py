@@ -256,7 +256,7 @@ class ComputerUseClient:
 
         try:
             if self.debug:
-                print(f"[COMPUTER_USE] Setting viewport size to {self.config.policy.screenshot_width}x{self.config.policy.screenshot_height}")
+                print(f"[COMPUTER_USE] Setting viewport size to 1400x850")
             # Set viewport size for consistent screenshot dimensions
             await active_page.set_viewport_size({
                 "width": 1400,
