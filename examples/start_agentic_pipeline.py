@@ -71,7 +71,7 @@ class ComputerUseClient:
         self.config = config
         self.debug = debug
 
-        self.available_tools = json.load(open("available_tools.json"))
+        self.available_tools = []
 
         # if self.debug:
         #     print("[COMPUTER_USE] Number of tools: ", len(self.available_tools))
