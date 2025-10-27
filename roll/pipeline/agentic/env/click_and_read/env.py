@@ -1,5 +1,5 @@
 import numpy as np
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image
 from typing import Tuple, Any, Dict
 import random
 import logging
@@ -699,45 +699,6 @@ Analyze the screenshot carefully and use the available tools to complete this ta
         bx, by = self.button_position
         return (bx <= x <= bx + self.button_size and 
                 by <= y <= by + self.button_size)
-
-    def _render_button_image(self) -> np.ndarray:
-        """Render image with green button at specified position"""
-        img = Image.new('RGB', (self.image_size, self.image_size), color='white')
-        draw = ImageDraw.Draw(img)
-        
-        # Draw green button
-        bx, by = self.button_position
-        draw.rectangle(
-            [bx, by, bx + self.button_size, by + self.button_size],
-            fill='green',
-            outline='darkgreen',
-            width=2
-        )
-        
-        return np.array(img)
-
-    def _render_word_image(self) -> np.ndarray:
-        """Render image with the target word displayed"""
-        img = Image.new('RGB', (self.image_size, self.image_size), color='lightblue')
-        draw = ImageDraw.Draw(img)
-        
-        # Draw the word in large text
-        try:
-            font = ImageFont.load_default(size=25)
-        except TypeError:
-            # Older Pillow versions don't support size parameter
-            font = ImageFont.load_default()
-        
-        # Center the word
-        text_bbox = draw.textbbox((0, 0), self.target_word, font=font)
-        text_w = text_bbox[2] - text_bbox[0]
-        text_h = text_bbox[3] - text_bbox[1]
-        text_x = (self.image_size - text_w) // 2
-        text_y = (self.image_size - text_h) // 2
-        
-        draw.text((text_x, text_y), self.target_word, fill='black', font=font)
-        
-        return np.array(img)
 
     def parse_action(self, text: str) -> Dict:
         """Parse tool calls from LLM output
