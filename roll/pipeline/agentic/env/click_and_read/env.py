@@ -377,7 +377,7 @@ class ComputerUseClient:
         return {"success": False, "error": f"Browser action failed after {max_retries} attempts"}
 
 class ComputerUseRunner:
-    def __init__(self, task: fleet.Task, env: fleet.Env, config: dict = None, debug: bool = False):
+    def __init__(self, task: fleet.Task, env, config: dict = None, debug: bool = False):
         self.task = task
         self.env = env
 
@@ -487,12 +487,19 @@ class ComputerUseRunner:
 
 class ClickAndReadEnv(Env):
     """
-    Simple VL + Tool Use Task:
-    1. Agent sees 100x100 image with a 25x25 green button in one of 4 positions
-    2. Agent must click the green button (correct coordinates)
-    3. If clicked correctly, new image appears with a word
-    4. Agent must read and submit the word
-    5. Terminal reward: 1 if correct, 0 otherwise
+    Browser automation environment using Fleet tasks.
+    
+    The agent interacts with web pages through browser actions (click, type, scroll, etc.)
+    to complete tasks provided by Fleet. Screenshots are returned as observations,
+    and tasks are verified through Fleet's verification system.
+    
+    Args:
+        tasks: List of Fleet tasks to use for episodes
+        max_steps: Maximum number of actions per episode
+        image_size: Not used (kept for compatibility)
+        button_size: Not used (kept for compatibility)
+        format_penalty: Penalty for invalid action format
+        render_mode: Rendering mode (default: "rgb_array")
     """
 
     def __init__(
@@ -510,7 +517,7 @@ class ClickAndReadEnv(Env):
         self.button_size = button_size
         self.format_penalty = format_penalty
         self.render_mode = render_mode
-        self.tasks = fleet.load_tasks(env_key="fira")
+        self.tasks = fleet.load_tasks(env_key="booking")
         self.selected_task = None
         self.env = None
         self.client = None
