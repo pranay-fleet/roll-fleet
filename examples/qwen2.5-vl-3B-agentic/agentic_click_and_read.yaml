@@ -23,7 +23,7 @@ track_with: wandb
 tracker_kwargs:
  api_key: ${oc.env:WANDB_API_KEY}  # Read from environment variable
  project: fleet-train
- name: ${exp_name}_click_and_read
+ name: ${exp_name}_click_and_read_v2
  notes: "agentic_pipeline"
  tags:
    - agentic
