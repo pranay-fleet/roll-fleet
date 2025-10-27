@@ -504,6 +504,7 @@ class ClickAndReadEnv(Env):
 
     def __init__(
         self,
+        tasks,  # Fleet tasks passed from env manager
         max_steps=5,
         image_size=100,
         button_size=25,
@@ -512,34 +513,16 @@ class ClickAndReadEnv(Env):
         **kwargs
     ):
         super().__init__()
+        self.tasks = tasks  # Use passed tasks instead of loading
         self.max_steps = max_steps
         self.image_size = image_size
         self.button_size = button_size
         self.format_penalty = format_penalty
         self.render_mode = render_mode
-        self.tasks = fleet.load_tasks(env_key="booking")
         self.selected_task = None
         self.env = None
         self.client = None
-
-        # 4 fixed button positions (corners)
-        # margin = 0
-        # self.BUTTON_POSITIONS = {
-        #     "top_left": (margin, margin),
-        #     "top_right": (image_size - button_size - margin, margin),
-        #     "bottom_left": (margin, image_size - button_size - margin),
-        #     "bottom_right": (image_size - button_size - margin, image_size - button_size - margin),
-        # }
-        
-        # # Word bank for the task
-        # self.WORDS = ["APPLE", "CHERRY", "EAGLE", "FOREST", "HELLO"]
-
-        # State tracking
         self.current_step = 0
-        # self.button_clicked = False
-        # self.button_position = None  # (x, y) of top-left corner
-        # self.button_location_name = None  # "top_left", etc.
-        # self.target_word = None
         self.current_image = None
 
     def get_instructions(self) -> str:

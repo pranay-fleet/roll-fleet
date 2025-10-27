@@ -74,7 +74,18 @@ class VLTrajEnvManager(TrajEnvManager):
             self.env_step_limiter = get_global_limiter(tag=env_tag, max_concurrent_calls=self.max_env_step_concurrent)
 
         with self.thread_lock, self.env_step_limiter:
-            self.env = gem.make(env_id=self.env_config["env_type"], **self.env_config['config'])
+            # For click_and_read env, load Fleet tasks once and pass them
+            env_config = dict(self.env_config['config'])
+            if self.env_config["env_type"] == "click_and_read":
+                # Load tasks once per env manager (shared across resets)
+                if "fleet_env_key" in env_config:
+                    import fleet
+                    fleet_env_key = env_config.pop("fleet_env_key")  # Remove from config
+                    if self.env_config["env_id"] == 0:
+                        self.logger.info(f"Loading Fleet tasks from env_key: {fleet_env_key}")
+                    env_config["tasks"] = fleet.load_tasks(env_key=fleet_env_key)
+            
+            self.env = gem.make(env_id=self.env_config["env_type"], **env_config)
 
         cfg_template = self.pipeline_config.custom_envs[self.env_config["tag"]]
         self.agent_system_template = cfg_template["agent_system_template"]

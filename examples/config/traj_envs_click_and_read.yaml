@@ -15,6 +15,7 @@ custom_env:
     pre_step_template: ${pre_step_template}
     next_step_template: ${next_step_template}
     env_config:
+      fleet_env_key: "booking"  # Fleet environment to load tasks from (loaded once per env manager)
       image_size: 100
       button_size: 25
       format_penalty: -0.1
